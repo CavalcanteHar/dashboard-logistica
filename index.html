@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Logístico</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- CABEÇALHO -->
+  <header class="header">
+    <div class="header-left">
+      <div class="header-icon"></div>
+      <div>
+        <h1 class="header-title">Dashboard Logístico</h1>
+        <p class="header-sub">Visualização de Dados · Monitoramento de Entregas</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="status-badge">
+        <span class="status-dot"></span>
+        10 registros carregados
+      </span>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- LINHA 1: FILTROS -->
+    <section class="filters-section" aria-label="Filtros">
+      <div class="filters-bar">
+        <div class="filter-group">
+          <label class="filter-label" for="filtro-regiao">Região</label>
+          <select id="filtro-regiao" class="filter-select">
+            <option value="">Todas as regiões</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label" for="filtro-transportadora">Transportadora</label>
+          <select id="filtro-transportadora" class="filter-select">
+            <option value="">Todas as transportadoras</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label" for="filtro-status">Status</label>
+          <select id="filtro-status" class="filter-select">
+            <option value="">Todos os status</option>
+            <option value="Atrasado">Atrasado</option>
+            <option value="No Prazo">No Prazo</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label" for="filtro-prioridade">Prioridade</label>
+          <select id="filtro-prioridade" class="filter-select">
+            <option value="">Todas as prioridades</option>
+            <option value="Crítico">Crítico</option>
+            <option value="Alto">Alto</option>
+            <option value="Médio">Médio</option>
+            <option value="Baixo">Baixo</option>
+            <option value="Sem Atraso">Sem Atraso</option>
+          </select>
+        </div>
+        <button class="btn-reset" id="btn-reset">↺ Limpar filtros</button>
+      </div>
+    </section>
+
+    <!-- LINHA 2: KPIs -->
+    <section class="kpi-section" aria-label="Indicadores principais">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <span class="kpi-icon">📋</span>
+          <div class="kpi-body">
+            <span class="kpi-label">Total de Entregas</span>
+            <span class="kpi-value" id="kpi-total">—</span>
+          </div>
+        </div>
+        <div class="kpi-card kpi-danger">
+          <span class="kpi-icon">⚠️</span>
+          <div class="kpi-body">
+            <span class="kpi-label">Entregas Atrasadas</span>
+            <span class="kpi-value" id="kpi-atrasadas">—</span>
+          </div>
+        </div>
+        <div class="kpi-card kpi-warning">
+          <span class="kpi-icon">📊</span>
+          <div class="kpi-body">
+            <span class="kpi-label">% de Atraso</span>
+            <span class="kpi-value" id="kpi-pct">—</span>
+          </div>
+        </div>
+        <div class="kpi-card kpi-info">
+          <span class="kpi-icon">⏱️</span>
+          <div class="kpi-body">
+            <span class="kpi-label">Média de Atraso</span>
+            <span class="kpi-value" id="kpi-media">—</span>
+            <span class="kpi-unit">dias</span>
+          </div>
+        </div>
+        <div class="kpi-card kpi-critical">
+          <span class="kpi-icon">🔴</span>
+          <div class="kpi-body">
+            <span class="kpi-label">Maior Atraso</span>
+            <span class="kpi-value" id="kpi-max">—</span>
+            <span class="kpi-unit">dias</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LINHA 3: GRÁFICOS -->
+    <section class="charts-section" aria-label="Análise comparativa">
+      <div class="charts-grid">
+
+        <!-- Gráfico transportadoras -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h2 class="chart-title">Ranking de Transportadoras</h2>
+            <span class="chart-subtitle">Atrasos por transportadora</span>
+          </div>
+          <div class="bar-chart" id="chart-transportadoras" role="img" aria-label="Gráfico de barras com atrasos por transportadora"></div>
+        </div>
+
+        <!-- Gráfico regiões -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h2 class="chart-title">Ranking de Regiões</h2>
+            <span class="chart-subtitle">Atrasos por região</span>
+          </div>
+          <div class="bar-chart" id="chart-regioes" role="img" aria-label="Gráfico de barras com atrasos por região"></div>
+        </div>
+
+        <!-- Gráfico pizza status -->
+        <div class="chart-card chart-card--small">
+          <div class="chart-header">
+            <h2 class="chart-title">Status das Entregas</h2>
+            <span class="chart-subtitle">Distribuição geral</span>
+          </div>
+          <div class="donut-wrapper">
+            <svg id="donut-chart" viewBox="0 0 160 160" width="140" height="140" role="img" aria-label="Gráfico de rosca com distribuição de entregas por status">
+              <title>Distribuição de entregas por status</title>
+            </svg>
+            <div class="donut-legend" id="donut-legend"></div>
+          </div>
+        </div>
+
+        <!-- Gráfico prioridades -->
+        <div class="chart-card chart-card--small">
+          <div class="chart-header">
+            <h2 class="chart-title">Distribuição por Prioridade</h2>
+            <span class="chart-subtitle">Classificação das entregas</span>
+          </div>
+          <div class="priority-bars" id="chart-prioridades"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- LINHA 4: TABELA -->
+    <section class="table-section" aria-label="Tabela de entregas">
+      <div class="table-card">
+        <div class="table-header">
+          <div>
+            <h2 class="chart-title">Tabela de Entregas Críticas</h2>
+            <span class="chart-subtitle" id="table-count">Exibindo todos os registros</span>
+          </div>
+          <button class="btn-export" id="btn-export">⬇ Exportar CSV</button>
+        </div>
+        <div class="table-scroll">
+          <table id="tabela-entregas" aria-label="Tabela detalhada de entregas">
+            <thead>
+              <tr>
+                <th data-col="id_entrega" class="sortable">ID <span class="sort-icon">↕</span></th>
+                <th data-col="transportadora" class="sortable">Transportadora <span class="sort-icon">↕</span></th>
+                <th data-col="regiao" class="sortable">Região <span class="sort-icon">↕</span></th>
+                <th data-col="prazo_dias" class="sortable">Prazo (dias) <span class="sort-icon">↕</span></th>
+                <th data-col="dias_reais" class="sortable">Dias Reais <span class="sort-icon">↕</span></th>
+                <th data-col="dias_atraso" class="sortable">Atraso (dias) <span class="sort-icon">↕</span></th>
+                <th data-col="status_entrega" class="sortable">Status <span class="sort-icon">↕</span></th>
+                <th data-col="prioridade" class="sortable">Prioridade <span class="sort-icon">↕</span></th>
+              </tr>
+            </thead>
+            <tbody id="tbody-entregas"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEGENDA DE PRIORIDADES -->
+    <section class="legend-section" aria-label="Legenda de prioridades">
+      <div class="legend-card">
+        <h3 class="legend-title">Legenda de Prioridades</h3>
+        <div class="legend-items">
+          <div class="legend-item">
+            <span class="badge badge-critico">Crítico</span>
+            <span class="legend-desc">Atraso ≥ 7 dias</span>
+          </div>
+          <div class="legend-item">
+            <span class="badge badge-alto">Alto</span>
+            <span class="legend-desc">Atraso de 4 a 6 dias</span>
+          </div>
+          <div class="legend-item">
+            <span class="badge badge-medio">Médio</span>
+            <span class="legend-desc">Atraso de 2 a 3 dias</span>
+          </div>
+          <div class="legend-item">
+            <span class="badge badge-baixo">Baixo</span>
+            <span class="legend-desc">Atraso de 1 dia</span>
+          </div>
+          <div class="legend-item">
+            <span class="badge badge-ok">Sem Atraso</span>
+            <span class="legend-desc">Dentro do prazo</span>
+          </div>
+        </div>
+        <p class="legend-rule">Regra de negócio: uma entrega é considerada <strong>atrasada</strong> quando <code>dias_reais &gt; prazo_dias</code></p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>Dashboard Logístico &nbsp;&nbsp;</p>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
